@@ -1,0 +1,37 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: DynamoDB table for User data
+
+Resources:
+
+  UserTable12:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: UserTable12
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      Tags:
+        - Key: CreatedBy
+          Value: BedrockPOC
+        - Key: Project
+          Value: GenAI-CFN-POC
+
+Outputs:
+
+  UserTableName:
+    Description: Name of the DynamoDB table
+    Value: !Ref UserTable12
+    Export:
+      Name: !Sub "${AWS::StackName}-UserTableName"
+
+  UserTableArn:
+    Description: ARN of the DynamoDB table
+    Value: !GetAtt UserTable12.Arn
+    Export:
+      Name: !Sub "${AWS::StackName}-UserTableArn"
