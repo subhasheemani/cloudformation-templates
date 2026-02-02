@@ -1,0 +1,165 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Infra01 Stack
+
+Resources:
+
+  infra01bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: infra01bucket
+      NotificationConfiguration:
+        TopicConfigurations:
+          - Event: s3:ObjectCreated:*
+            Topic: !Ref infra01sns
+
+  infra01sns:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: infra01sns
+
+  infra01snsPolicy:
+    Type: AWS::SNS::TopicPolicy
+    Properties:
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: s3.amazonaws.com
+            Action: SNS:Publish
+            Resource: !Ref infra01sns
+      Topics:
+        - !Ref infra01sns
+
+  infra01lambda1:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: infra01lambda1
+      Runtime: python3.9
+      Handler: index.lambda_handler
+      Code:
+        ZipFile: |
+          def lambda_handler(event, context):
+            print("file received")
+            return {
+              'statusCode': 200,
+              'body': 'Lambda function executed successfully'
+            }
+      Role: !GetAtt infra01lambda1Role.Arn
+
+  infra01lambda1Role:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
+  infra01lambda1Permission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref infra01lambda1
+      Action: 'lambda:InvokeFunction'
+      Principal: sns.amazonaws.com
+      SourceArn: !Ref infra01sns
+
+  infra01stepfunction:
+    Type: AWS::StepFunctions::StateMachine
+    Properties:
+      DefinitionString: !Sub |
+        {
+          "Comment": "Infra01 Step Function",
+          "StartAt": "Invoke infra01lambda1",
+          "States": {
+            "Invoke infra01lambda1": {
+              "Type": "Task",
+              "Resource": "${infra01lambda1.Arn}",
+              "Next": "Invoke infra01lambda2"
+            },
+            "Invoke infra01lambda2": {
+              "Type": "Task",
+              "Resource": "${infra01lambda2.Arn}",
+              "End": true
+            }
+          }
+        }
+      RoleArn: !GetAtt infra01stepfunctionRole.Arn
+
+  infra01stepfunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: states.amazonaws.com
+            Action: 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaRole
+
+  infra01lambda2:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: infra01lambda2
+      Runtime: python3.9
+      Handler: index.lambda_handler
+      Code:
+        ZipFile: |
+          def lambda_handler(event, context):
+            print("process completed")
+            return {
+              'statusCode': 200,
+              'body': 'Lambda function executed successfully'
+            }
+      Role: !GetAtt infra01lambda2Role.Arn
+
+  infra01lambda2Role:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
+Outputs:
+
+  S3BucketName:
+    Description: Name of the S3 bucket
+    Value: !Ref infra01bucket
+    Export:
+      Name: !Sub "${AWS::StackName}-S3BucketName"
+
+  SNSTopicARN:
+    Description: ARN of the SNS topic
+    Value: !Ref infra01sns
+    Export:
+      Name: !Sub "${AWS::StackName}-SNSTopicARN"
+
+  Lambda1FunctionARN:
+    Description: ARN of the first Lambda function
+    Value: !GetAtt infra01lambda1.Arn
+    Export:
+      Name: !Sub "${AWS::StackName}-Lambda1FunctionARN"
+
+  Lambda2FunctionARN:
+    Description: ARN of the second Lambda function
+    Value: !GetAtt infra01lambda2.Arn
+    Export:
+      Name: !Sub "${AWS::StackName}-Lambda2FunctionARN"
+
+  StepFunctionARN:
+    Description: ARN of the Step Functions state machine
+    Value: !Ref infra01stepfunction
+    Export:
+      Name: !Sub "${AWS::StackName}-StepFunctionARN"
