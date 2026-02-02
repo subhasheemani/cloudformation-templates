@@ -1,0 +1,30 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: DynamoDB table creation
+
+Resources:
+
+  SopraTable12:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: SopraTable12
+      AttributeDefinitions:
+        - AttributeName: PrimaryKey
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PrimaryKey
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+
+Outputs:
+
+  SopraTable12Arn:
+    Description: ARN of the DynamoDB table
+    Value: !GetAtt SopraTable12.Arn
+    Export:
+      Name: !Sub "${AWS::StackName}-SopraTable12Arn"
+
+  SopraTable12Name:
+    Description: Name of the DynamoDB table
+    Value: !Ref SopraTable12
+    Export:
+      Name: !Sub "${AWS::StackName}-SopraTable12Name"
