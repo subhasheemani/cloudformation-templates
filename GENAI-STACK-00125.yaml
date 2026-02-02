@@ -1,0 +1,37 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Creates a DynamoDB table named "UserTable020226"
+
+Resources:
+
+  UserTable020226:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: UserTable020226
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      Tags:
+        - Key: CreatedBy
+          Value: BedrockPOC
+        - Key: Project
+          Value: GenAI-CFN-POC
+
+Outputs:
+
+  UserTableName:
+    Description: The name of the DynamoDB table
+    Value: !Ref UserTable020226
+    Export:
+      Name: !Sub "${AWS::StackName}-UserTableName"
+
+  UserTableArn:
+    Description: The ARN of the DynamoDB table
+    Value: !GetAtt UserTable020226.Arn
+    Export:
+      Name: !Sub "${AWS::StackName}-UserTableArn"
