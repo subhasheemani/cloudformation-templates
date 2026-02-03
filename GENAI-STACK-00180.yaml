@@ -1,0 +1,48 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Creates an S3 bucket, DynamoDB table, and SNS topic.
+
+Resources:
+
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: ipgsoprasteria90code
+
+  DynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ipgsoprasteriaUserTable990
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+  SNSTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: MyipgsoprasteriaSNSTopic
+
+Outputs:
+
+  S3BucketName:
+    Description: Name of the S3 bucket
+    Value: !Ref S3Bucket
+    Export:
+      Name: !Sub "${AWS::StackName}-S3BucketName"
+
+  DynamoDBTableName:
+    Description: Name of the DynamoDB table
+    Value: !Ref DynamoDBTable
+    Export:
+      Name: !Sub "${AWS::StackName}-DynamoDBTableName"
+
+  SNSTopicArn:
+    Description: ARN of the SNS topic
+    Value: !Ref SNSTopic
+    Export:
+      Name: !Sub "${AWS::StackName}-SNSTopicArn"
