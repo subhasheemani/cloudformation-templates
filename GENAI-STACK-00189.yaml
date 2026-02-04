@@ -1,0 +1,7 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Create an SNS topic named infra01sns
+
+Resources:
+  infra01sns:
+    Type: AWS::SNS::Topic
+    Properties: {}
