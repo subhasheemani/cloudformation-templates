@@ -12,13 +12,13 @@ phases:
       - echo Preparing generated CDK app
       - rm -rf cdk-app
       - mkdir cdk-app
-      - cd cdk-app
-      - printf "%s" "$TEMPLATE_BODY" > app.py
-      - printf "aws-cdk-lib\nconstructs\n" > requirements.txt
-      - 'printf "{\n  \"app\": \"python app.py\"\n}\n" > cdk.json'
+      - printf "%s" "$TEMPLATE_BODY" > cdk-app/app.py
+      - printf "aws-cdk-lib\nconstructs\n" > cdk-app/requirements.txt
+      - 'printf "{\n  \"app\": \"python app.py\"\n}\n" > cdk-app/cdk.json'
 
   build:
     commands:
       - cd cdk-app
+      - pip install -r requirements.txt
       - cdk bootstrap
       - cdk deploy --require-approval never
