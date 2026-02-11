@@ -14,7 +14,7 @@ phases:
       - mkdir cdk-app
       - printf "%s" "$TEMPLATE_BODY" > cdk-app/app.py
       - printf "aws-cdk-lib\nconstructs\n" > cdk-app/requirements.txt
-      - printf "{\n  \"app\": \"python app.py\"\n}\n" > cdk-app/cdk.json
+      - 'printf "{\n  \"app\": \"python app.py\"\n}\n" > cdk-app/cdk.json'
 
   build:
     commands:
