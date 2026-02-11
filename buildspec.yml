@@ -1,28 +1,29 @@
 version: 0.2
- 
+
 phases:
   install:
     commands:
       - npm install -g aws-cdk
       - python -m pip install --upgrade pip
       - pip install aws-cdk-lib constructs
- 
+
   pre_build:
     commands:
-      - echo "Creating CDK app folder"
-      - mkdir -p cdk-app
+      - echo "Preparing generated CDK app"
+      - rm -rf cdk-app
+      - mkdir cdk-app
       - cd cdk-app
- 
+
       - echo "Writing generated CDK code to app.py"
-      - echo "$TEMPLATE_BODY" > app.py
- 
-      - echo "Creating minimal requirements.txt"
+      - printf "%s" "$TEMPLATE_BODY" > app.py
+
+      - echo "Creating requirements.txt"
       - |
         cat > requirements.txt <<EOF
 aws-cdk-lib
 constructs
 EOF
- 
+
       - echo "Creating cdk.json"
       - |
         cat > cdk.json <<EOF
@@ -30,7 +31,7 @@ EOF
   "app": "python app.py"
 }
 EOF
- 
+
   build:
     commands:
       - cd cdk-app
