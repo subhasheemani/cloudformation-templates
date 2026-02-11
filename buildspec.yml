@@ -14,18 +14,11 @@ phases:
       - mkdir cdk-app
       - printf "%s" "$TEMPLATE_BODY" > cdk-app/app.py
       - printf "aws-cdk-lib\nconstructs\n" > cdk-app/requirements.txt
-      - 'printf "{\n  \"app\": \"python app.py\"\n}\n" > cdk-app/cdk.json
+      - printf "{\n  \"app\": \"python app.py\"\n}\n" > cdk-app/cdk.json
 
   build:
     commands:
       - cd cdk-app
       - pip install -r requirements.txt
-
-      # get account id inside CodeBuild
-      - ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-
-      # bootstrap explicitly
       - cdk bootstrap aws://616613568484/eu-central-1
-
-      # deploy
       - cdk deploy --require-approval never
