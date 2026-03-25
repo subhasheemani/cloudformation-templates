@@ -2,23 +2,43 @@ version: 0.2
 
 phases:
   install:
+    runtime-versions:
+      python: 3.11
+      nodejs: 20
     commands:
+      - echo Installing dependencies...
       - npm install -g aws-cdk
       - python -m pip install --upgrade pip
       - pip install aws-cdk-lib constructs
 
   pre_build:
     commands:
-      - echo Preparing generated CDK app
+      - echo Preparing generated CDK app...
       - rm -rf cdk-app
       - mkdir cdk-app
+
+      # Write generated CDK code
       - printf "%s" "$TEMPLATE_BODY" > cdk-app/app.py
+
+      # Requirements
       - printf "aws-cdk-lib\nconstructs\n" > cdk-app/requirements.txt
-      - 'printf "{\n  \"app\": \"python app.py\"\n}\n" > cdk-app/cdk.json'
+
+      # CDK config
+      - |
+        printf '{
+          "app": "python app.py"
+        }' > cdk-app/cdk.json
 
   build:
     commands:
+      - echo Starting CDK deployment...
       - cd cdk-app
+
       - pip install -r requirements.txt
-      - cdk bootstrap aws://616613568484/eu-central-1
-      - cdk deploy --require-approval never
+
+      # Debug logs
+      - echo "STACK_NAME=$STACK_NAME"
+      - echo "Deploying stack..."
+
+      # Deploy (NO bootstrap here)
+      - cdk deploy $STACK_NAME --require-approval never
