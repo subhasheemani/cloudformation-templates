@@ -46,6 +46,7 @@ phases:
         printf "import '../lib/app';" > bin/cdk-app.ts
 
   build:
-    commands:
-      - npx cdk bootstrap
-      - npx cdk deploy $STACK_NAME --require-approval never
+  commands:
+    - npx tsc
+    - npx cdk bootstrap
+    - npx cdk deploy $STACK_NAME --require-approval never
