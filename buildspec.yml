@@ -3,42 +3,49 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      python: 3.11
-      nodejs: 20
+      nodejs: 18
     commands:
-      - echo Installing dependencies...
       - npm install -g aws-cdk
-      - python -m pip install --upgrade pip
-      - pip install aws-cdk-lib constructs
 
   pre_build:
     commands:
-      - echo Preparing generated CDK app...
+      - echo "Preparing CDK TypeScript app"
       - rm -rf cdk-app
-      - mkdir cdk-app
+      - mkdir -p cdk-app/lib
 
-      # Write generated CDK code
-      - printf "%s" "$TEMPLATE_BODY" > cdk-app/app.py
+      # Write generated code
+      - printf "%s" "$TEMPLATE_BODY" > cdk-app/lib/app.ts
 
-      # Requirements
-      - printf "aws-cdk-lib\nconstructs\n" > cdk-app/requirements.txt
-
-      # CDK config
+      # Create package.json
       - |
         printf '{
-          "app": "python app.py"
-        }' > cdk-app/cdk.json
+          "name": "cdk-app",
+          "version": "1.0.0",
+          "bin": {
+            "cdk-app": "bin/cdk-app.js"
+          }
+        }' > cdk-app/package.json
+
+      # Create tsconfig
+      - |
+        printf '{
+          "compilerOptions": {
+            "target": "ES2020",
+            "module": "commonjs",
+            "strict": true
+          }
+        }' > cdk-app/tsconfig.json
+
+      # Install dependencies
+      - cd cdk-app
+      - npm install aws-cdk-lib constructs typescript ts-node
+
+      # Create entry file
+      - mkdir -p bin
+      - |
+        printf "import '../lib/app';" > bin/cdk-app.ts
 
   build:
     commands:
-      - echo Starting CDK deployment...
-      - cd cdk-app
-
-      - pip install -r requirements.txt
-
-      # Debug logs
-      - echo "STACK_NAME=$STACK_NAME"
-      - echo "Deploying stack..."
-
-      # Deploy (NO bootstrap here)
-      - cdk deploy $STACK_NAME --require-approval never
+      - npx cdk bootstrap
+      - npx cdk deploy $STACK_NAME --require-approval never
