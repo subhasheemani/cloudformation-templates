@@ -1,0 +1,34 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Create an S3 bucket and a Lambda function
+
+Resources:
+
+  employees89:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: employees89
+
+  testLambda89Role:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: 'sts:AssumeRole'
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      
+  testLambda89:
+    Type: AWS::Lambda::Function
+    Properties:
+      Runtime: python3.12
+      Handler: index.handler
+      Role: !GetAtt testLambda89Role.Arn
+      Code:
+        ZipFile: |
+          import boto3
+          def handler(event, context):
+            print('Hello from Lambda!')
