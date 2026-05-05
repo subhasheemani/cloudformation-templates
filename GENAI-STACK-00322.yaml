@@ -1,0 +1,40 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Lambda function with SNS subscription
+
+Resources:
+
+  lambdainchromeRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: 'sts:AssumeRole'
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
+  lambdainchrome:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: lambdainchrome
+      Runtime: python3.12
+      Handler: index.lambda_handler
+      Role: !GetAtt lambdainchromeRole.Arn
+      Code:
+        ZipFile: |
+          def lambda_handler(event, context):
+            print("Hello World")
+            return {
+                'statusCode': 200,
+                'body': 'Hello World'
+            }
+
+  SNSSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      TopicArn: arn:aws:sns:eu-central-1:616613568484:snsinchrome0505
+      Protocol: lambda
+      Endpoint: !GetAtt lambdainchrome.Arn
