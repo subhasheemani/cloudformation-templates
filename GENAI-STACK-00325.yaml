@@ -1,0 +1,19 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: SNS Topic to Lambda Subscription
+
+Resources:
+
+  SNStoLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: arn:aws:lambda:eu-central-1:616613568484:function:lambdainchrome
+      Action: 'lambda:InvokeFunction'
+      Principal: sns.amazonaws.com
+      SourceArn: arn:aws:sns:eu-central-1:616613568484:snsinchrome0505
+
+  SNSSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      TopicArn: arn:aws:sns:eu-central-1:616613568484:snsinchrome0505
+      Protocol: lambda
+      Endpoint: arn:aws:lambda:eu-central-1:616613568484:function:lambdainchrome
