@@ -1,0 +1,44 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: AWS CloudFormation template for creating a Step Functions state machine that invokes an existing Lambda function
+
+Resources:
+
+  stepfunctioninchrome:
+    Type: AWS::StepFunctions::StateMachine
+    Properties:
+      DefinitionString:
+        !Sub |
+          {
+            "Comment": "A step function that invokes an existing Lambda function",
+            "StartAt": "Invoke Lambda",
+            "States": {
+              "Invoke Lambda": {
+                "Type": "Task",
+                "Resource": "arn:aws:lambda:eu-central-1:616613568484:function:GENAI-STACK-00294-testLambda89-L9DunB3x2wGg",
+                "End": true
+              }
+            }
+          }
+      RoleArn: !GetAtt stepfunctioninchromeRole.Arn
+      StateMachineName: stepfunctioninchrome
+
+  stepfunctioninchromeRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: states.amazonaws.com
+          Action: 'sts:AssumeRole'
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AWSLambdaRole
+
+  SNStoStepFunctionPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: arn:aws:lambda:eu-central-1:616613568484:function:lambdainchrome
+      Action: lambda:InvokeFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt stepfunctioninchrome.Arn
