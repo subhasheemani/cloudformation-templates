@@ -1,0 +1,12 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Add permissions for lambdainchrome to trigger stepfunctioninchrome
+
+Resources:
+
+  SNStoStepFunctionPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: arn:aws:lambda:eu-central-1:616613568484:function:lambdainchrome
+      Action: lambda:InvokeFunction
+      Principal: states.amazonaws.com
+      SourceArn: arn:aws:states:eu-central-1:616613568484:stateMachine:stepfunctioninchrome
