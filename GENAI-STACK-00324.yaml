@@ -1,0 +1,11 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Add SNS trigger to existing Lambda function
+
+Resources:
+
+  SNSSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      TopicArn: arn:aws:sns:eu-central-1:616613568484:snsinchrome0505
+      Protocol: lambda
+      Endpoint: arn:aws:lambda:eu-central-1:616613568484:function:lambdainchrome
