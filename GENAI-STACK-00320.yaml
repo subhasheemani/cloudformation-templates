@@ -1,0 +1,11 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Attach email subscription to existing SNS topic
+
+Resources:
+
+  SNSSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      TopicArn: arn:aws:sns:eu-central-1:616613568484:snsinchrome0505
+      Protocol: email
+      Endpoint: gembalisrujana1234@gmail.com
