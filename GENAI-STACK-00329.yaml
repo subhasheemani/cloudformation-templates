@@ -1,0 +1,39 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: IAM Role for Lambda to start StepFunction
+
+Resources:
+
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: 'sts:AssumeRole'
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
+      - arn:aws:iam::aws:policy/AWSStepFunctionsFullAccess
+
+  LambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: arn:aws:lambda:eu-central-1:616613568484:function:lambdainchrome
+      Action: 'lambda:InvokeFunction'
+      Principal: states.amazonaws.com
+
+  StepFunctionInvokePermission:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: StepFunctionInvokePolicy
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action: 'states:StartExecution'
+          Resource: arn:aws:states:eu-central-1:616613568484:stateMachine:stepfunctioninchrome
+      Roles:
+      - Ref: LambdaExecutionRole
