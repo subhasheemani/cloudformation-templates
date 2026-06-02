@@ -1,0 +1,9 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: SNS Event Creation
+
+Resources:
+
+  SNSEvent1:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: snsevent1
