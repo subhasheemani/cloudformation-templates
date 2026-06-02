@@ -1,0 +1,23 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: SNS Event 3
+
+Resources:
+
+  SNSEvent3:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: snsevent3
+
+  SNSEvent3Policy:
+    Type: AWS::SNS::TopicPolicy
+    Properties:
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: '*'
+            Action: sns:Publish
+            Resource: !Ref SNSEvent3
+      Topics:
+        - !Ref SNSEvent3
