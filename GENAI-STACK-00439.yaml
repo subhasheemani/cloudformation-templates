@@ -1,0 +1,16 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: S3 bucket with 30-day lifecycle rule
+
+Resources:
+
+  TestGaurdrailsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: testgaurdrails
+      VersioningConfiguration:
+        Status: Enabled
+      LifecycleConfiguration:
+        Rules:
+          - Id: DeleteAfter30Days
+            Status: Enabled
+            ExpirationInDays: 30
