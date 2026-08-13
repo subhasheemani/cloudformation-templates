@@ -1,0 +1,9 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: AWS CloudFormation template for creating an SQS queue
+
+Resources:
+
+  SopraSteriaProdSQS:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: soprasteria_prod_sqs_queue
