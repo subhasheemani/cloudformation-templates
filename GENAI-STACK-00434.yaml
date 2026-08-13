@@ -1,0 +1,9 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Create an SQS queue named test_guardrail_queue
+
+Resources:
+
+  TestGuardrailQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: test_guardrail_queue
