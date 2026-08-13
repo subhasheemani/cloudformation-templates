@@ -1,0 +1,9 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: SQS Queue Creation
+
+Resources:
+
+  SopraSteriaProdSQS:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: soprasteria_prod_sqs
