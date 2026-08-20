@@ -1,0 +1,7 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Creates an SQS queue named test_environment_sqs in the PROD environment (eu-central-1)
+Resources:
+  testenvironmentsqs:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: test_environment_sqs
