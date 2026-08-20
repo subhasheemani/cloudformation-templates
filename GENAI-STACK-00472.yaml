@@ -1,0 +1,9 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Adds an email subscription to the existing SNS topic filetriggerevent in PROD (eu-central-1)
+Resources:
+  filetriggereventEmailSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      Protocol: email
+      Endpoint: gembalisrujana1234@gamil.com
+      TopicArn: arn:aws:sns:eu-central-1:616613568484:filetriggerevent
