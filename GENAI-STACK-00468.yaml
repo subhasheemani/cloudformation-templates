@@ -1,0 +1,46 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: PROD environment resources in eu-central-1 - S3 bucket, DynamoDB table and SNS topic
+Resources:
+  mmrregstaging:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: mmr-reg-staging
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      VersioningConfiguration:
+        Status: Enabled
+  scheduledItems:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: scheduledItems
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      SSESpecification:
+        SSEEnabled: true
+  Durdatetrigger:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: Durdatetrigger
+      DisplayName: Durdatetrigger
+Outputs:
+  BucketNameOutput:
+    Description: Name of the created S3 bucket
+    Value: !Ref mmrregstaging
+  DynamoDBTableNameOutput:
+    Description: Name of the created DynamoDB table
+    Value: !Ref scheduledItems
+  SNSTopicArnOutput:
+    Description: ARN of the created SNS topic
+    Value: !Ref Durdatetrigger
