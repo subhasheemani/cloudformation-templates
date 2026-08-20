@@ -1,0 +1,7 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Creates an SQS queue named test_ppd_sqs3 in the PPD environment (eu-central-1)
+Resources:
+  testppdsqs3:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: test_ppd_sqs3
