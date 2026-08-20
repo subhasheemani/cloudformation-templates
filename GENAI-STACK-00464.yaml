@@ -1,0 +1,14 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Creates an SQS queue named test_ppd_sqs6 in the PPD environment (eu-central-1)
+Resources:
+  testppdsqs6:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: test_ppd_sqs6
+Outputs:
+  testppdsqs6QueueUrl:
+    Description: URL of the SQS queue test_ppd_sqs6
+    Value: !Ref testppdsqs6
+  testppdsqs6QueueArn:
+    Description: ARN of the SQS queue test_ppd_sqs6
+    Value: !GetAtt testppdsqs6.Arn
