@@ -1,0 +1,55 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: PROD - S3 bucket mmr-reg-landing with SNS topic filetriggerevent notification on ObjectCreated events in eu-central-1
+Resources:
+  filetriggerevent:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: filetriggerevent
+      DisplayName: filetriggerevent
+  filetriggereventPolicy:
+    Type: AWS::SNS::TopicPolicy
+    Properties:
+      Topics:
+        - !Ref filetriggerevent
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: AllowS3Publish
+            Effect: Allow
+            Principal:
+              Service: s3.amazonaws.com
+            Action: sns:Publish
+            Resource: !Ref filetriggerevent
+            Condition:
+              ArnLike:
+                aws:SourceArn: !Sub 'arn:${AWS::Partition}:s3:::mmr-reg-landing'
+              StringEquals:
+                aws:SourceAccount: !Ref AWS::AccountId
+  mmrreglanding:
+    Type: AWS::S3::Bucket
+    DependsOn: filetriggereventPolicy
+    Properties:
+      BucketName: mmr-reg-landing
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      NotificationConfiguration:
+        TopicConfigurations:
+          - Event: 's3:ObjectCreated:*'
+            Topic: !Ref filetriggerevent
+Outputs:
+  BucketName:
+    Description: Name of the created S3 bucket
+    Value: !Ref mmrreglanding
+  BucketArn:
+    Description: ARN of the created S3 bucket
+    Value: !GetAtt mmrreglanding.Arn
+  TopicArn:
+    Description: ARN of the created SNS topic
+    Value: !Ref filetriggerevent
