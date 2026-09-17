@@ -1,0 +1,15 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Creates an SNS topic named MySNSTopic1907 in the PPD environment (us-east-1)
+Resources:
+  MySNSTopic1907:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: MySNSTopic1907
+      DisplayName: MySNSTopic1907
+Outputs:
+  MySNSTopic1907Arn:
+    Description: ARN of the created SNS topic
+    Value: !Ref MySNSTopic1907
+  MySNSTopic1907Name:
+    Description: Name of the created SNS topic
+    Value: !GetAtt MySNSTopic1907.TopicName
