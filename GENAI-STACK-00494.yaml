@@ -1,0 +1,7 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Creates an SNS topic named MySNSTopic2109 in the PROD environment (eu-central-1)
+Resources:
+  MySNSTopic2109:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: MySNSTopic2109
